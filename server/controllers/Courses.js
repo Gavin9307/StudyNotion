@@ -1,11 +1,11 @@
 const Course = require("../models/Course");
-const Tag = require("../models/Tag");
+const Category = require("../models/Category");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 exports.createCourse = async (req, res) => {
   try {
-    const { courseName, courseDescription, whatYouWillLearn, price, tag } =
+    const { courseName, courseDescription, whatYouWillLearn, price, category } =
       req.body;
     const thumbnail = req.files.thumbnailImage;
 
@@ -14,7 +14,7 @@ exports.createCourse = async (req, res) => {
       !courseDescription ||
       !whatYouWillLearn ||
       !price ||
-      !tag ||
+      !category ||
       !thumbnail
     ) {
       return res.status(400).json({
@@ -34,13 +34,13 @@ exports.createCourse = async (req, res) => {
       });
     }
 
-    const tagDetails = await User.findById(tag);
-    console.log("Instructor Details = ", tagDetails);
+    const categoryDetails = await User.findById(category);
+    console.log("Instructor Details = ", categoryDetails);
 
-    if (!tagDetails) {
+    if (!categoryDetails) {
       return res.status(400).json({
         success: false,
-        message: "Tag Details not found",
+        message: "Category Details not found",
       });
     }
 
@@ -53,7 +53,7 @@ exports.createCourse = async (req, res) => {
       courseName,
       courseDescription,
       Instructor: instructorDetails._id,
-      tag: tagDetails._id,
+      category: categoryDetails._id,
       price,
       whatYouWillLearn,
       thumbnail: thumbnailImage.secure_url,
@@ -70,8 +70,8 @@ exports.createCourse = async (req, res) => {
       { new: true }
     );
 
-    await Tag.findByIdAndUpdate(
-      { _id: Tag._id },
+    await Category.findByIdAndUpdate(
+      { _id: Category._id },
       {
         $push: {
           courses: newCourse._id,

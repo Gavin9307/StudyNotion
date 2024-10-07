@@ -1,6 +1,6 @@
-const Tag = require("../models/Tag");
+const Category = require("../models/Category");
 
-exports.createTag = async (req,res) => {
+exports.createCategory = async (req,res) => {
     try {
         const {name,description} = req.body;
 
@@ -11,47 +11,47 @@ exports.createTag = async (req,res) => {
             })
         }
 
-        const findTag = await Tag.findOne({name:name});
-        if(findTag){
+        const findCategory = await Category.findOne({name:name});
+        if(findCategory){
             return res.status(403).json({
                 success:false,
-                message:"Tag already exists"
+                message:"Category already exists"
             })
         }
 
-        const tagDetails = await Tag.create({
+        const categoryDetails = await Category.create({
             name:name,
             description:description,
         })
-        console.log(tagDetails);
+        console.log(categoryDetails);
 
         return res.status(200).json({
             success:true,
-            message:"Tag Created Successfully"
+            message:"category Created Successfully"
         })
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             success:false,
-            message:"Couldnt create tag",
+            message:"Couldnt create category",
             errorMessage:error.message
         })
     }
 };
 
-exports.showAllTags = async (req,res) => {
+exports.showAllCategories = async (req,res) => {
     try {
-        const tags = await Tag.find({},{name:true,description:true});
+        const categories = await Category.find({},{name:true,description:true});
         return res.status(200).json({
-            tags:tags,
+            categories:categories,
             success:true,
-            message:"tags fetched successfully"
+            message:"categories fetched successfully"
         })
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             success:false,
-            message:"Couldnt fetch all tags",
+            message:"Couldnt fetch all categories",
             errorMessage:error.message
         })
     }
