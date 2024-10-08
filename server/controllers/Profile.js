@@ -3,10 +3,10 @@ const User = require("../models/User");
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { dateOfBirth = "", about = "", contactNumber, gender } = req.body;
+    const { dateOfBirth = "", about = "", contactNumber} = req.body;
     const id = req.user.id;
 
-    if (!contactNumber || !gender || !id) {
+    if (!contactNumber|| !id) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -18,7 +18,6 @@ exports.updateProfile = async (req, res) => {
 
     profile.dateOfBirth = dateOfBirth;
     profile.about = about;
-    profile.gender = gender;
     profile.contactNumber = contactNumber;
 
     await profile.save();
@@ -41,20 +40,14 @@ exports.deleteAccount = async (req, res) => {
   try {
     const id = req.user.id;
 
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
-
-    const user = await User.findById(id);
-    if(!user) {
-        return res.status(404).json({
-            success: false,
-            message: "User not found",
-          });
-    }
+    const user = await User.findById({ _id: id });
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found",
+			});
+		}
+    
     const profileId = user.additionalDetails;
     await Profile.findByIdAndDelete(profileId);
     await User.findByIdAndDelete(id);
