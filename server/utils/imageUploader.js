@@ -1,6 +1,6 @@
-const cloudinary = require("../config/cloudinary")
+const cloudinary = require("../config/cloudinary");
 
-exports.uploadImageToCloudinary = async(file,folder,height,quality)=>{
+const uploadImageToCloudinary = async(file,folder,height,quality)=>{
     const options = {
         folder
     }
@@ -14,3 +14,5 @@ exports.uploadImageToCloudinary = async(file,folder,height,quality)=>{
 
     return await cloudinary.uploader.upload(file.tempFilePath,options);
 }
+
+module.exports = uploadImageToCloudinary;

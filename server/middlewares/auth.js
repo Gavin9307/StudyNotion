@@ -4,10 +4,11 @@ const User = require("../models/User");
 
 exports.auth = async (req, res, next) => {
   try {
+    // Correct spelling of "Authorization"
     const token =
       req.cookies.token ||
       req.body.token ||
-      req.header("Authorisation").replace("Bearer ", "");
+      req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
       return res.status(401).json({
@@ -17,16 +18,18 @@ exports.auth = async (req, res, next) => {
     }
 
     try {
-      const decode = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(decode);
-      req.user = decode;
+      // Verify the token and decode it
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(decoded);
+      req.user = decoded; // Set the decoded user data in req.user
     } catch (error) {
       return res.status(401).json({
         success: false,
         message: "Error verifying token",
       });
     }
-    next();
+    
+    next(); // Call the next middleware/handler
   } catch (error) {
     console.error(error);
     return res.status(401).json({
@@ -35,6 +38,7 @@ exports.auth = async (req, res, next) => {
     });
   }
 };
+
 
 exports.isStudent = async (req, res, next) => {
   try {

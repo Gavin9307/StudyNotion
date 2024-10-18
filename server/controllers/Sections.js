@@ -62,7 +62,7 @@ exports.updateSection = async (req, res) => {
     );
     return res.status(200).json({
       success: true,
-      updatedCourse: updatedCourse,
+      updatedSection: section,
       message: "Section Updated successfully",
     });
   } catch (error) {
@@ -76,7 +76,7 @@ exports.updateSection = async (req, res) => {
 
 exports.deleteSection = async (req, res) => {
   try {
-    const sectionId = req.params.id;
+    const sectionId = req.body.sectionId;
     if (!sectionId) {
       return res.status(400).json({
         success: false,
@@ -100,7 +100,6 @@ exports.deleteSection = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      updatedCourse: updatedCourse,
       message: "Section Deleted successfully",
     });
   } catch (error) {

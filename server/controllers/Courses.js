@@ -1,7 +1,8 @@
 const Course = require("../models/Course");
 const Category = require("../models/Category");
 const User = require("../models/User");
-const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const uploadImageToCloudinary = require("../utils/imageUploader");
+const { default: mongoose } = require("mongoose");
 
 exports.createCourse = async (req, res) => {
   try {
@@ -38,17 +39,6 @@ exports.createCourse = async (req, res) => {
       status = "Draft";
     }
 
-    const instructorDetails = await User.findById(userId, {
-      accountType: "Instructor",
-    });
-
-    if (!instructorDetails) {
-      return res.status(404).json({
-        success: false,
-        message: "Instructor Details Not Found",
-      });
-    }
-
     const categoryDetails = await Category.findById(category);
     if (!categoryDetails) {
       return res.status(404).json({
@@ -60,11 +50,12 @@ exports.createCourse = async (req, res) => {
       thumbnail,
       process.env.FOLDER_NAME
     );
+
     console.log(thumbnailImage);
     const newCourse = await Course.create({
       courseName,
       courseDescription,
-      instructor: instructorDetails._id,
+      instructor: new mongoose.Types.ObjectId(userId),
       whatYouWillLearn: whatYouWillLearn,
       price,
       tag: tag,
@@ -76,7 +67,7 @@ exports.createCourse = async (req, res) => {
 
     await User.findByIdAndUpdate(
       {
-        _id: instructorDetails._id,
+        _id: new mongoose.Types.ObjectId(userId),
       },
       {
         $push: {

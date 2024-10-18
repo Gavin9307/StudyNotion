@@ -37,6 +37,7 @@ exports.sendOtp = async function (req, res) {
       const otpPayload = { email, otp };
       const otpBody = await Otp.create(otpPayload);
       console.log(otpBody);
+      
       res.status(200).json({
         success: true,
         message: "OTP created successfully",
@@ -55,7 +56,7 @@ exports.sendOtp = async function (req, res) {
 
 exports.signUp = async function (req, res) {
   try {
-    const {
+   const {
       firstName,
       lastName,
       email,
@@ -97,16 +98,15 @@ exports.signUp = async function (req, res) {
       .sort({ createdAt: -1 })
       .limit(1);
     console.log("Recent OTP = " + recentOtp);
-
     if (recentOtp.length == 0) {
       return res.status(400).json({
         success: false,
         message: "Otp not found",
       });
-    } else if (otp !== recentOtp.otp) {
+    } else if (otp != recentOtp[0].otp) {
       return res.status(400).json({
         success: false,
-        message: "Invalid Otp",
+        message: "Invalid Otpc"
       });
     }
 
@@ -131,6 +131,7 @@ exports.signUp = async function (req, res) {
     res.status(200).json({
       success: true,
       message: "Sign Up Successful",
+      user
     });
   } catch (error) {
     console.error(error);
@@ -165,7 +166,7 @@ exports.login = async function (req, res) {
     if (await bcrypt.compare(password, findUser.password)) {
       const payload = {
         email: findUser.email,
-        id: findUser.id,
+        id: findUser._id,
         accountType: findUser.accountType,
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
